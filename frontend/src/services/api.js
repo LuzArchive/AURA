@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_URL || 'https://aura-vert-omega.vercel.app';
+const BASE_URL = import.meta.env.VITE_API_URL 
 
 export const saveToken   = (t) => localStorage.setItem('token', t);
 export const getToken    = ()  => localStorage.getItem('token');
@@ -20,49 +20,49 @@ const request = async (endpoint, options = {}) => {
 
 export const api = {
   auth: {
-    login: (email, password, role) => request('/auth/login', { method:'POST', body:JSON.stringify({ email, password, role }) }),
-    getMe: () => request('/auth/me'),
+    login: (email, password, role) => request('/api/auth/login', { method:'POST', body:JSON.stringify({ email, password, role }) }),
+    getMe: () => request('/api/auth/me'),
   },
   students: {
-    getMyProfile:  ()     => request('/students/me'),
-    updateProfile: (data) => request('/students/me', { method:'PUT', body:JSON.stringify(data) }),
-    getMyStudents: ()     => request('/students'),
-    register:      (data) => request('/students/register', { method:'POST', body:JSON.stringify(data) }),
+    getMyProfile:  ()     => request('/api/students/me'),
+    updateProfile: (data) => request('/api/students/me', { method:'PUT', body:JSON.stringify(data) }),
+    getMyStudents: ()     => request('/api/students'),
+    register:      (data) => request('/api/students/register', { method:'POST', body:JSON.stringify(data) }),
   },
   tutors: {
-    getMyProfile:  ()     => request('/tutors/me'),
-    updateProfile: (data) => request('/tutors/me', { method:'PUT', body:JSON.stringify(data) }),
-    getById:       (id)   => request(`/tutors/${id}`),
-    register:      (data) => request('/tutors/register', { method:'POST', body:JSON.stringify(data) }),
-    assignStudent: (sid)  => request('/tutors/assign', { method:'POST', body:JSON.stringify({ studentId: sid }) }),
+    getMyProfile:  ()     => request('/api/tutors/me'),
+    updateProfile: (data) => request('/api/tutors/me', { method:'PUT', body:JSON.stringify(data) }),
+    getById:       (id)   => request(`/api/tutors/${id}`),
+    register:      (data) => request('/api/tutors/register', { method:'POST', body:JSON.stringify(data) }),
+    assignStudent: (sid)  => request('/api/tutors/assign', { method:'POST', body:JSON.stringify({ studentId: sid }) }),
   },
   sessions: {
-    getAll:   ()          => request('/sessions'),
-    getById:  (id)        => request(`/sessions/${id}`),
-    create:   (data)      => request('/sessions',       { method:'POST',   body:JSON.stringify(data) }),
-    update:   (id, data)  => request(`/sessions/${id}`, { method:'PUT',    body:JSON.stringify(data) }),
-    delete:   (id)        => request(`/sessions/${id}`, { method:'DELETE'  }),
+    getAll:   ()          => request('/api/sessions'),
+    getById:  (id)        => request(`/api/sessions/${id}`),
+    create:   (data)      => request('/api/sessions',       { method:'POST',   body:JSON.stringify(data) }),
+    update:   (id, data)  => request(`/api/sessions/${id}`, { method:'PUT',    body:JSON.stringify(data) }),
+    delete:   (id)        => request(`/api/sessions/${id}`, { method:'DELETE'  }),
   },
   credits: {
-    getMy:        ()            => request('/credits/me'),
-    getByStudent: (sid)         => request(`/credits/${sid}`),
-    create:       (data)        => request('/credits',        { method:'POST', body:JSON.stringify(data) }),
-    update:       (sid, data)   => request(`/credits/${sid}`, { method:'PUT',  body:JSON.stringify(data) }),
+    getMy:        ()            => request('/api/credits/me'),
+    getByStudent: (sid)         => request(`/api/credits/${sid}`),
+    create:       (data)        => request('/api/credits',        { method:'POST', body:JSON.stringify(data) }),
+    update:       (sid, data)   => request(`/api/credits/${sid}`, { method:'PUT',  body:JSON.stringify(data) }),
   },
   coordinator: {
-    getReports:    ()                        => request('/coordinator/reports'),
-    getStudents:   ()                        => request('/coordinator/students'),
-    getTutors:     ()                        => request('/coordinator/tutors'),
-    createTutor:   (data)                    => request('/coordinator/tutors',          { method:'POST',  body:JSON.stringify(data) }),
-    assignTutor:   (studentId, tutorId)      => request('/coordinator/assign',          { method:'POST',  body:JSON.stringify({ studentId, tutorId }) }),
-    getReleases:   (status)                  => request(`/coordinator/releases${status ? `?status=${status}` : ''}`),
-    getReleasePDF: (id)                      => request(`/releases/${id}/pdf`),
-    reviewRelease: (id, status, notes)       => request(`/coordinator/releases/${id}`,  { method:'PATCH', body:JSON.stringify({ status, reviewNotes: notes }) }),
-    manualCredit:  (data)                    => request('/coordinator/credits/manual',  { method:'PATCH', body:JSON.stringify(data) }),
+    getReports:    ()                        => request('/api/coordinator/reports'),
+    getStudents:   ()                        => request('/api/coordinator/students'),
+    getTutors:     ()                        => request('/api/coordinator/tutors'),
+    createTutor:   (data)                    => request('/api/coordinator/tutors',          { method:'POST',  body:JSON.stringify(data) }),
+    assignTutor:   (studentId, tutorId)      => request('/api/coordinator/assign',          { method:'POST',  body:JSON.stringify({ studentId, tutorId }) }),
+    getReleases:   (status)                  => request(`/api/coordinator/releases${status ? `?status=${status}` : ''}`),
+    getReleasePDF: (id)                      => request(`/api/releases/${id}/pdf`),
+    reviewRelease: (id, status, notes)       => request(`/api/coordinator/releases/${id}`,  { method:'PATCH', body:JSON.stringify({ status, reviewNotes: notes }) }),
+    manualCredit:  (data)                    => request('/api/coordinator/credits/manual',  { method:'PATCH', body:JSON.stringify(data) }),
   },
   releases: {
-    submit:   (data)  => request('/releases',    { method:'POST', body:JSON.stringify(data) }),
-    getMy:    ()      => request('/releases/me'),
-    getPDF:   (id)    => request(`/releases/${id}/pdf`),
+    submit:   (data)  => request('/api/releases',    { method:'POST', body:JSON.stringify(data) }),
+    getMy:    ()      => request('/api/releases/me'),
+    getPDF:   (id)    => request(`/api/releases/${id}/pdf`),
   },
 };
