@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://aura-vert-omega.vercel.app';
 
 export const saveToken   = (t) => localStorage.setItem('token', t);
 export const getToken    = ()  => localStorage.getItem('token');
