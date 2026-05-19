@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import ArchetypeSurvey from './ArchetypeSurvey';
+import { useIsMobile } from '../../hooks/useIsMobile';
+import logoImg from '../../assets/logo.png';
 
 const MailIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -105,6 +107,7 @@ const Circles = () => (
 // ── Main Login ────────────────────────────────────────────────────────────────
 const Login = () => {
   const { login } = useAuth();
+  const isMobile = useIsMobile();
   const [role,     setRole]     = useState('student');
   const [email,    setEmail]    = useState('');
   const [password, setPassword] = useState('');
@@ -142,44 +145,88 @@ const Login = () => {
         @keyframes floatUp      { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
         @keyframes spin         { to{transform:rotate(360deg)} }
         @keyframes panelFade    { from{opacity:0} to{opacity:1} }
+        @keyframes starPulse    { 0%,100%{opacity:.15;transform:scale(1)} 50%{opacity:.35;transform:scale(1.15)} }
+        @keyframes starPulse2   { 0%,100%{opacity:.1;transform:scale(1) rotate(0deg)} 50%{opacity:.25;transform:scale(1.2) rotate(20deg)} }
+        @keyframes shimmer      { 0%{transform:translateX(-100%) rotate(25deg)} 100%{transform:translateX(400%) rotate(25deg)} }
+        @keyframes logoGlow     { 0%,100%{filter:drop-shadow(0 0 8px rgba(255,255,255,.3))} 50%{filter:drop-shadow(0 0 20px rgba(255,255,255,.6))} }
+        @keyframes particleUp   { 0%{opacity:0;transform:translateY(0) scale(0)} 20%{opacity:.6} 100%{opacity:0;transform:translateY(-120px) scale(1.2)} }
       `}</style>
 
-      <div style={{ minHeight:'100vh', display:'flex', background:'#f0f4ff' }}>
+      <div style={{ minHeight:'100vh', display:'flex', flexDirection: isMobile ? 'column' : 'row', background:'#f0f4ff' }}>
 
         {/* ── Left panel ── */}
         <div key={role} style={{
-          width:'45%', minHeight:'100vh',
+          width: isMobile ? '100%' : '45%',
+          minHeight: isMobile ? 'auto' : '100vh',
           background: panel.gradient,
           display:'flex', flexDirection:'column', justifyContent:'center',
-          padding:'60px 56px', position:'relative', overflow:'hidden',
+          padding: isMobile ? '36px 28px 32px' : '60px 56px',
+          position:'relative', overflow:'hidden',
           animation:'panelSlide .4s ease both',
           transition:'background .5s ease',
         }}>
           <Circles />
 
-          {/* Logo */}
-          <div style={{ display:'flex', alignItems:'center', gap:14, marginBottom:52 }}>
-            <div style={{ width:48, height:48, borderRadius:14, background:'rgba(255,255,255,.18)', display:'flex', alignItems:'center', justifyContent:'center', backdropFilter:'blur(8px)', color:'white' }}>
-              {currentRole.icon}
+          {/* ── Partículas decorativas ── */}
+          {[...Array(6)].map((_, i) => (
+            <div key={i} style={{
+              position:'absolute',
+              left: `${15 + i * 14}%`,
+              bottom: `${10 + (i % 3) * 8}%`,
+              width: i % 2 === 0 ? 4 : 3,
+              height: i % 2 === 0 ? 4 : 3,
+              borderRadius:'50%',
+              background:'rgba(255,255,255,.5)',
+              animation:`particleUp ${2.5 + i * 0.4}s ease-in-out infinite`,
+              animationDelay:`${i * 0.6}s`,
+              pointerEvents:'none',
+            }}/>
+          ))}
+
+          {/* ── Estrellas decorativas ── */}
+          <div style={{ position:'absolute', top:'12%', right:'8%', width:80, height:80, opacity:.2, animation:'starPulse2 5s ease-in-out infinite', pointerEvents:'none' }}>
+            <svg viewBox="0 0 80 80" fill="none"><path d="M40 4 L44 36 L76 40 L44 44 L40 76 L36 44 L4 40 L36 36 Z" fill="white"/></svg>
+          </div>
+          <div style={{ position:'absolute', top:'35%', right:'18%', width:24, height:24, opacity:.25, animation:'starPulse 3.5s ease-in-out infinite 1s', pointerEvents:'none' }}>
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 1 L13.5 10.5 L23 12 L13.5 13.5 L12 23 L10.5 13.5 L1 12 L10.5 10.5 Z" fill="white"/></svg>
+          </div>
+          <div style={{ position:'absolute', bottom:'25%', left:'8%', width:16, height:16, opacity:.2, animation:'starPulse 4s ease-in-out infinite 0.5s', pointerEvents:'none' }}>
+            <svg viewBox="0 0 16 16" fill="none"><path d="M8 1 L9 7 L15 8 L9 9 L8 15 L7 9 L1 8 L7 7 Z" fill="white"/></svg>
+          </div>
+
+          {/* ── Logo AURA ── */}
+          <div style={{ display:'flex', alignItems:'center', gap: isMobile ? 12 : 16, marginBottom: isMobile ? 20 : 52 }}>
+            <div style={{ position:'relative', width:60, height:60, flexShrink:0 }}>
+              {/* Glow ring */}
+              <div style={{ position:'absolute', inset:-4, borderRadius:18, background:'rgba(255,255,255,.1)', backdropFilter:'blur(8px)', border:'1px solid rgba(255,255,255,.2)' }}/>
+              {/* Shimmer effect */}
+              <div style={{ position:'absolute', inset:0, borderRadius:14, overflow:'hidden' }}>
+                <div style={{ position:'absolute', top:0, left:0, width:'40%', height:'100%', background:'linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent)', animation:'shimmer 3s ease-in-out infinite 1s' }}/>
+              </div>
+              <img
+                src={logoImg}
+                alt="AURA"
+                style={{ width: isMobile ? 44 : 60, height: isMobile ? 44 : 60, borderRadius:12, objectFit:'contain', filter:'brightness(0) invert(1)', animation:'logoGlow 3s ease-in-out infinite', position:'relative', zIndex:1 }}
+              />
             </div>
             <div>
-              <div style={{ fontFamily:"'Playfair Display',serif", fontWeight:700, fontSize:17, color:'white', lineHeight:1.1 }}>Sistema de</div>
-              <div style={{ fontFamily:"'Playfair Display',serif", fontWeight:700, fontSize:17, color:'rgba(255,255,255,.7)', lineHeight:1.1 }}>Tutorías TecNM</div>
+              <div style={{ fontFamily:"'Playfair Display',serif", fontWeight:700, fontSize: isMobile ? 22 : 28, color:'white', lineHeight:1, letterSpacing:3, textTransform:'uppercase' }}>AURA</div>
+              {!isMobile && <div style={{ fontFamily:"'DM Sans',sans-serif", fontWeight:400, fontSize:12, color:'rgba(255,255,255,.65)', letterSpacing:1.5, textTransform:'uppercase', marginTop:3 }}>Asistencia Universitaria Reactiva y Adaptativa</div>}
             </div>
           </div>
 
           {/* Hero */}
           <div style={{ animation:'floatUp 4s ease-in-out infinite' }}>
-            <h1 style={{ fontFamily:"'Playfair Display',serif", fontWeight:700, fontSize:38, color:'white', lineHeight:1.25, marginBottom:18, whiteSpace:'pre-line' }}>
+            <h1 style={{ fontFamily:"'Playfair Display',serif", fontWeight:700, fontSize: isMobile ? 26 : 38, color:'white', lineHeight:1.25, marginBottom: isMobile ? 0 : 18, whiteSpace:'pre-line' }}>
               {panel.title}
             </h1>
           </div>
-          <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:15, color:'rgba(255,255,255,.72)', lineHeight:1.7, maxWidth:340, marginBottom:48 }}>
+          <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:15, color:'rgba(255,255,255,.72)', lineHeight:1.7, maxWidth:340, marginBottom: isMobile ? 0 : 48, display: isMobile ? 'none' : 'block' }}>
             {panel.subtitle}
           </p>
 
           {/* Stats */}
-          <div style={{ display:'flex', gap:32 }}>
+          <div style={{ display: isMobile ? 'none' : 'flex', gap:32 }}>
             {panel.stats.map(s => (
               <div key={s.l}>
                 <div style={{ fontFamily:"'Playfair Display',serif", fontWeight:700, fontSize:28, color:'white' }}>{s.v}</div>
@@ -190,8 +237,8 @@ const Login = () => {
         </div>
 
         {/* ── Right panel ── */}
-        <div style={{ flex:1, display:'flex', alignItems:'center', justifyContent:'center', padding:'40px 32px', animation:'loginFadeIn .55s .15s ease both' }}>
-          <div style={{ width:'100%', maxWidth:440 }}>
+        <div style={{ flex:1, display:'flex', alignItems:'center', justifyContent:'center', padding: isMobile ? '28px 20px 40px' : '40px 32px', animation:'loginFadeIn .55s .15s ease both' }}>
+          <div style={{ width:'100%', maxWidth: isMobile ? '100%' : 440 }}>
 
             {/* Header */}
             <div style={{ marginBottom:28, textAlign:'center' }}>
@@ -213,7 +260,7 @@ const Login = () => {
                 return (
                   <button key={r.id} onClick={() => handleRoleChange(r.id)}
                     style={{
-                      flex:1, padding:'10px 6px 10px',
+                      flex:1, padding: isMobile ? '8px 4px' : '10px 6px 10px',
                       border: active ? `2px solid ${r.color}` : '2px solid #e8edf5',
                       borderRadius:12, cursor:'pointer',
                       background: active ? r.bg : 'white',
