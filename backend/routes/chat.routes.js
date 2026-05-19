@@ -1,12 +1,12 @@
 import express from 'express';
-import Groq    from 'groq-sdk';
-import process from 'node:process';
-import jwt     from 'jsonwebtoken';
-import Student from '../models/Student.model.js';
+import Groq     from 'groq-sdk';
+import process  from 'node:process';
+import jwt      from 'jsonwebtoken';
+import Student  from '../models/Student.model.js';
 
 const router = express.Router();
 
-// ── Personalidades por arquetipo ──────────────────────────────────────────────
+// ── Personalidades por arquetipo (se inyectan al system prompt) ───────────────
 const ARCHETYPE_PERSONALITY = {
   analitico: `
 PERSONALIDAD DEL AGENTE — ANALÍTICO (Ocelote):
@@ -48,7 +48,7 @@ router.get('/test', (_req, res) => {
   });
 });
 
-// ── POST /chat ────────────────────────────────────────────────────────────────
+// ── POST /api/chat/chat ───────────────────────────────────────────────────────
 router.post('/chat', async (req, res) => {
   console.log('[chat] petición recibida');
 
@@ -68,7 +68,7 @@ router.post('/chat', async (req, res) => {
     return res.status(400).json({ error: 'El campo "messages" debe ser un arreglo no vacío.' });
   }
 
-  // ── Leer arquetipo del token JWT (silencioso — no rompe si falla) ─────────
+  // ── Leer arquetipo del token JWT (silencioso — nunca rompe el chat) ────────
   let archetypePersonality = '';
   try {
     const authHeader = req.headers.authorization;
@@ -84,13 +84,12 @@ router.post('/chat', async (req, res) => {
       }
     }
   } catch {
-    // Sin token o token inválido — continúa sin personalidad adaptativa
+    // Sin token o inválido — continúa sin personalidad adaptativa
   }
 
   // ── Construir mensajes ────────────────────────────────────────────────────
   const formattedMessages = [];
 
-  // Inyectar personalidad al inicio del system prompt si existe
   const fullSystem = archetypePersonality
     ? `${archetypePersonality}\n\n---\n\n${system || ''}`
     : (system || '');
